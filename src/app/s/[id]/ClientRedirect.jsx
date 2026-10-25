@@ -15,19 +15,22 @@ export default function ClientRedirect({ linkData }) {
     }
   }, [type, targetUrl]);
 
-  // Step 2-এর টাইমার কাউন্টডাউন
+  // Step 2-এর টাইমার কাউন্টডাউন লজিক
   useEffect(() => {
+    let timer;
     if (type === 'shortener' && step === 2) {
       if (timeLeft > 0) {
-        const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
-        return () => clearTimeout(timer);
+        timer = setTimeout(() => {
+          setTimeLeft((prev) => prev - 1);
+        }, 1000);
       } else {
         setCanGo(true);
       }
     }
+    return () => clearTimeout(timer);
   }, [type, step, timeLeft]);
 
-  // Image cloaking হলে ব্যাকগ্রাউন্ডে কিছুই রেন্ডার হবে না
+  // Image cloaking হলে লোডিং স্ক্রিন দেখাবে
   if (type === 'cloaking') {
     return (
       <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
@@ -37,30 +40,47 @@ export default function ClientRedirect({ linkData }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white flex flex-col items-center justify-between p-4">
-      {/* Top Ad Banner Container */}
-      <div className="w-full max-w-4xl bg-gray-900 border border-gray-800 rounded-lg p-4 text-center my-2 min-h-[100px] flex items-center justify-center">
-        {/* এখানে আপনার Adsterra Top Banner Ad Script বা iframe বসাবেন */}
-        <p className="text-xs text-gray-500">[ Adsterra Top Banner Ad Placement ]</p>
-      </div>
+    <div className="min-h-screen bg-gray-950 text-white flex flex-col justify-between p-4">
+      
+      {/* ----------------- STEP 1: Get Link Page ----------------- */}
+      {step === 1 && (
+        <>
+          {/* Top Ad 1 */}
+          <div className="w-full max-w-4xl mx-auto bg-gray-900 border border-gray-800 rounded-lg p-4 text-center my-2 min-h-[90px] flex items-center justify-center">
+            <p className="text-xs text-gray-500">[ Get Link Page - Top Adsterra Ad ]</p>
+          </div>
 
-      {/* Main Content Area */}
-      <div className="my-auto text-center w-full max-w-md bg-gray-900/80 border border-gray-800 p-8 rounded-2xl shadow-xl backdrop-blur-sm">
-        {step === 1 ? (
-          <div>
+          {/* Main Get Link Button Area */}
+          <div className="my-auto text-center w-full max-w-md mx-auto bg-gray-900/80 border border-gray-800 p-8 rounded-2xl shadow-xl backdrop-blur-sm">
             <h2 className="text-xl font-semibold mb-6 text-gray-200">Your Link is Ready</h2>
             <button
               onClick={() => setStep(2)}
-              className="w-full py-4 px-8 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all transform hover:scale-105 shadow-lg shadow-blue-600/30 text-lg"
+              className="w-full py-4 px-8 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all transform hover:scale-105 shadow-lg shadow-blue-600/30 text-lg cursor-pointer"
             >
               Get Link
             </button>
           </div>
-        ) : (
-          <div>
+
+          {/* Bottom Ad 1 */}
+          <div className="w-full max-w-4xl mx-auto bg-gray-900 border border-gray-800 rounded-lg p-4 text-center my-2 min-h-[90px] flex items-center justify-center">
+            <p className="text-xs text-gray-500">[ Get Link Page - Bottom Adsterra Ad ]</p>
+          </div>
+        </>
+      )}
+
+      {/* ----------------- STEP 2: Timer Page ----------------- */}
+      {step === 2 && (
+        <>
+          {/* Top Ad 2 */}
+          <div className="w-full max-w-4xl mx-auto bg-gray-900 border border-gray-800 rounded-lg p-4 text-center my-2 min-h-[90px] flex items-center justify-center">
+            <p className="text-xs text-gray-500">[ Timer Page - Top Adsterra Ad ]</p>
+          </div>
+
+          {/* Main Timer / Go To Link Area */}
+          <div className="my-auto text-center w-full max-w-md mx-auto bg-gray-900/80 border border-gray-800 p-8 rounded-2xl shadow-xl backdrop-blur-sm">
             {!canGo ? (
               <div className="space-y-4">
-                <p className="text-gray-400 font-medium">Please wait a few seconds...</p>
+                <p className="text-gray-400 font-medium">Please wait while we process your link...</p>
                 <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-600/10 border-2 border-blue-500 text-blue-400 font-bold text-3xl rounded-full animate-pulse">
                   {timeLeft}s
                 </div>
@@ -74,14 +94,14 @@ export default function ClientRedirect({ linkData }) {
               </a>
             )}
           </div>
-        )}
-      </div>
 
-      {/* Bottom Ad Banner Container */}
-      <div className="w-full max-w-4xl bg-gray-900 border border-gray-800 rounded-lg p-4 text-center my-2 min-h-[100px] flex items-center justify-center">
-        {/* এখানে আপনার Adsterra Bottom Banner Ad Script বা iframe বসাবেন */}
-        <p className="text-xs text-gray-500">[ Adsterra Bottom Banner Ad Placement ]</p>
-      </div>
+          {/* Bottom Ad 2 */}
+          <div className="w-full max-w-4xl mx-auto bg-gray-900 border border-gray-800 rounded-lg p-4 text-center my-2 min-h-[90px] flex items-center justify-center">
+            <p className="text-xs text-gray-500">[ Timer Page - Bottom Adsterra Ad ]</p>
+          </div>
+        </>
+      )}
+
     </div>
   );
 }
