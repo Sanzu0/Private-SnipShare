@@ -1,13 +1,19 @@
-import { Redis } from '@upstash/redis';
+import { createClient } from 'redis';
 import ClientRedirect from './ClientRedirect';
-
-const redis = Redis.fromEnv();
 
 async function getLinkData(id) {
   try {
-    const data = await redis.get(id);
-    return data;
+    const client = createClient({
+      url: process.env.REDIS_URL,
+    });
+    await client.connect();
+    
+    const data = await client.get(id);
+    await client.quit();
+    
+    return data ? JSON.parse(data) : null;
   } catch (error) {
+    console.error('Redis Fetch Error:', error);
     return null;
   }
 }

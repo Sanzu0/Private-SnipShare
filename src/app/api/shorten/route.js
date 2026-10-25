@@ -1,7 +1,19 @@
 import { NextResponse } from 'next/server';
-import { Redis } from '@upstash/redis';
+import { createClient } from 'redis';
 
-const redis = Redis.fromEnv();
+// গ্লোবাল ক্লায়েন্ট তৈরি
+let client;
+
+async function getRedisClient() {
+  if (!client) {
+    client = createClient({
+      url: process.env.REDIS_URL,
+    });
+    client.on('error', (err) => console.error('Redis Client Error', err));
+    await client.connect();
+  }
+  return client;
+}
 
 export async function POST(request) {
   try {
@@ -11,6 +23,8 @@ export async function POST(request) {
     if (!targetUrl) {
       return NextResponse.json({ success: false, message: 'Target URL is required' }, { status: 400 });
     }
+
+    const redis = await getRedisClient();
 
     const id = Math.random().toString(36).substring(2, 7) + Date.now().toString(36).slice(-3);
     const shortId = id.slice(0, 6);
@@ -24,8 +38,8 @@ export async function POST(request) {
       createdAt: new Date().toISOString(),
     };
 
-    // Redis ডাটাবেজে সেভ করা
-    await redis.set(shortId, linkData);
+    // Redis-এ ডাটা সেভ করা
+    await redis.set(shortId, JSON.stringify(linkData));
 
     const host = request.headers.get('host') || 'localhost:3000';
     const protocol = host.includes('localhost') ? 'http' : 'https';
@@ -33,7 +47,7 @@ export async function POST(request) {
 
     return NextResponse.json({ success: true, shortUrl });
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ success: false, message: 'Internal Server Error' }, { status: 500 });
+    console.error('API Error:', error);
+    return NextResponse.json({ success: false, message: 'Internal Server Error: ' + error.message }, { status: 500 });
   }
 }
