@@ -1,25 +1,23 @@
-import fs from 'fs';
-import path from 'path';
+import { Redis } from '@upstash/redis';
 import ClientRedirect from './ClientRedirect';
 
-// সার্ভার সাইডে ডাটা পড়ার ফাংশন
-function getLinkData(id) {
-  const filePath = path.join(process.cwd(), 'data.json');
-  if (!fs.existsSync(filePath)) return null;
-  const fileData = fs.readFileSync(filePath, 'utf8');
-  const links = JSON.parse(fileData);
-  return links[id] || null;
+const redis = Redis.fromEnv();
+
+async function getLinkData(id) {
+  try {
+    const data = await redis.get(id);
+    return data;
+  } catch (error) {
+    return null;
+  }
 }
 
-// ১. সোশ্যাল মিডিয়া বটগুলোর জন্য মেটা ট্যাগ জেনারেট করা (Open Graph)
 export async function generateMetadata({ params }) {
   const { id } = await params;
-  const linkData = getLinkData(id);
+  const linkData = await getLinkData(id);
 
   if (!linkData || linkData.type !== 'cloaking') {
-    return {
-      title: 'Redirecting...',
-    };
+    return { title: 'Redirecting...' };
   }
 
   return {
@@ -37,10 +35,9 @@ export async function generateMetadata({ params }) {
   };
 }
 
-// ২. মেইন পেজ কম্পোনেন্ট
 export default async function Page({ params }) {
   const { id } = await params;
-  const linkData = getLinkData(id);
+  const linkData = await getLinkData(id);
 
   if (!linkData) {
     return (

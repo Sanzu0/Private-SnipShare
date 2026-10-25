@@ -1,23 +1,8 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { Redis } from '@upstash/redis';
 
-// ডেটা সেভ করার জন্য লোকাল JSON ফাইলের পাথ
-const filePath = path.join(process.cwd(), 'data.json');
-
-// হেলপার ফাংশন: ডাটা পড়া
-function readData() {
-  if (!fs.existsSync(filePath)) {
-    fs.writeFileSync(filePath, JSON.stringify({}));
-  }
-  const fileData = fs.readFileSync(filePath, 'utf8');
-  return JSON.parse(fileData);
-}
-
-// হেলপার ফাংশন: ডাটা লেখা
-function writeData(data) {
-  fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
-}
+// .env.local থেকে স্বয়ংক্রিয়ভাবে REDIS_URL রিড করবে
+const redis = Redis.fromEnv();
 
 export async function POST(request) {
   try {
@@ -32,10 +17,7 @@ export async function POST(request) {
     const id = Math.random().toString(36).substring(2, 7) + Date.now().toString(36).slice(-3);
     const shortId = id.slice(0, 6);
 
-    const links = readData();
-
-    // লিঙ্কের তথ্য অবজেক্ট আকারে সেভ করা
-    links[shortId] = {
+    const linkData = {
       id: shortId,
       type, // 'adsterra' অথবা 'cloaking'
       targetUrl,
@@ -44,7 +26,8 @@ export async function POST(request) {
       createdAt: new Date().toISOString(),
     };
 
-    writeData(links);
+    // Redis-এ ডাটা সেভ করা
+    await redis.set(shortId, linkData);
 
     // ডোমেইন ডায়নামিকভাবে ধরে শর্ট লিঙ্ক তৈরি করা
     const host = request.headers.get('host') || 'localhost:3000';
