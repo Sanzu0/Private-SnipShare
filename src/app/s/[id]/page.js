@@ -13,7 +13,31 @@ async function getLinkData(id) {
   }
 }
 
-export default async function GetLinkPage({ params }) {
+// সোশ্যাল মিডিয়া প্রিভিউ (Facebook/Twitter Open Graph) দেখানোর জন্য
+export async function generateMetadata({ params }) {
+  const { id } = await params;
+  const linkData = await getLinkData(id);
+
+  if (!linkData || linkData.type !== 'cloaking') {
+    return { title: 'Redirecting...' };
+  }
+
+  return {
+    title: linkData.title,
+    openGraph: {
+      title: linkData.title,
+      images: [{ url: linkData.imageUrl }],
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: linkData.title,
+      images: [linkData.imageUrl],
+    },
+  };
+}
+
+export default async function Page({ params }) {
   const { id } = await params;
   const linkData = await getLinkData(id);
 
@@ -25,13 +49,26 @@ export default async function GetLinkPage({ params }) {
     );
   }
 
-  // যদি cloaking হয়, তবে সাথে সাথে মূল লিঙ্কে রিডাইরেক্ট করে দেবে
+  // ১. Image Cloaking হলে সাথে সাথে মূল লিঙ্কে রিডাইরেক্ট করে দেবে
   if (linkData.type === 'cloaking') {
     return (
-      <meta httpEquiv="refresh" content={`0;url=${linkData.targetUrl}`} />
+      <html lang="en">
+        <head>
+          <meta httpEquiv="refresh" content={`0;url=${linkData.targetUrl}`} />
+        </head>
+        <body className="bg-gray-950 text-white flex items-center justify-center min-h-screen">
+          <p className="animate-pulse">Redirecting to target page...</p>
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `window.location.href = "${linkData.targetUrl}";`,
+            }}
+          />
+        </body>
+      </html>
     );
   }
 
+  // ২. Shortener-এর ক্ষেত্রে সাধারণ Get Link পেজ দেখাবে
   return (
     <div className="min-h-screen bg-gray-950 text-white flex flex-col justify-between p-4">
       {/* Top Ad 1 */}
