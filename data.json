@@ -1,0 +1,42 @@
+{
+  "6sete9": {
+    "id": "6sete9",
+    "type": "adsterra",
+    "targetUrl": "https://www.youtube.com/",
+    "imageUrl": "",
+    "title": "Click to view content",
+    "createdAt": "2026-10-25T12:36:59.326Z"
+  },
+  "dwwawn": {
+    "id": "dwwawn",
+    "type": "cloaking",
+    "targetUrl": "https://www.youtube.com/",
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROPQWkcvaWIv4mQZK-L_do9XOWPHpG0ubyT29YMK6fAQ&s=10",
+    "title": "12:34",
+    "createdAt": "2026-10-25T12:39:37.180Z"
+  },
+  "g9ubop": {
+    "id": "g9ubop",
+    "type": "cloaking",
+    "targetUrl": "https://www.youtube.com/",
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROPQWkcvaWIv4mQZK-L_do9XOWPHpG0ubyT29YMK6fAQ&s=10",
+    "title": "12:34",
+    "createdAt": "2026-10-25T12:39:39.346Z"
+  },
+  "swp86q": {
+    "id": "swp86q",
+    "type": "cloaking",
+    "targetUrl": "https://www.youtube.com/",
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROPQWkcvaWIv4mQZK-L_do9XOWPHpG0ubyT29YMK6fAQ&s=10",
+    "title": "12:34",
+    "createdAt": "2026-10-25T12:39:40.485Z"
+  },
+  "zditlr": {
+    "id": "zditlr",
+    "type": "cloaking",
+    "targetUrl": "https://www.youtube.com/",
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROPQWkcvaWIv4mQZK-L_do9XOWPHpG0ubyT29YMK6fAQ&s=10",
+    "title": "12:34",
+    "createdAt": "2026-10-25T12:39:42.555Z"
+  }
+}
