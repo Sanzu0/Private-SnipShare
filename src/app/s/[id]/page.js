@@ -49,26 +49,36 @@ export default async function Page({ params }) {
     );
   }
 
-  // ১. Image Cloaking হলে সাথে সাথে মূল লিঙ্কে রিডাইরেক্ট করে দেবে
+  // ১. Image Cloaking: ৩ সেকেন্ডের রিডাইরেক্ট পেজ এবং অটো-রিডাইরেক্ট
   if (linkData.type === 'cloaking') {
     return (
       <html lang="en">
         <head>
-          <meta httpEquiv="refresh" content={`0;url=${linkData.targetUrl}`} />
+          <meta httpEquiv="refresh" content={`3;url=${linkData.targetUrl}`} />
+          <title>{linkData.title}</title>
         </head>
-        <body className="bg-gray-950 text-white flex items-center justify-center min-h-screen">
-          <p className="animate-pulse">Redirecting to target page...</p>
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `window.location.href = "${linkData.targetUrl}";`,
-            }}
-          />
+        <body className="bg-gray-950 text-white flex flex-col items-center justify-center min-h-screen p-4">
+          <div className="text-center space-y-4 bg-gray-900/80 border border-gray-800 p-8 rounded-2xl shadow-xl max-w-md w-full">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600/10 border-2 border-blue-500 text-blue-400 font-bold text-xl rounded-full animate-pulse mx-auto">
+              3s
+            </div>
+            <h2 className="text-xl font-semibold text-gray-200">Redirecting to destination...</h2>
+            <p className="text-sm text-gray-400">Please wait while we safely redirect you to the main page.</p>
+            <div className="pt-2">
+              <a
+                href={linkData.targetUrl}
+                className="inline-block w-full py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-all text-sm text-center shadow-lg shadow-blue-600/20"
+              >
+                Click here if not redirected automatically
+              </a>
+            </div>
+          </div>
         </body>
       </html>
     );
   }
 
-  // ২. Shortener-এর ক্ষেত্রে সাধারণ Get Link পেজ দেখাবে
+  // ২. Shortener-এর ক্ষেত্রে সাধারণ Get Link পেজ (আগের মতো)
   return (
     <div className="min-h-screen bg-gray-950 text-white flex flex-col justify-between p-4">
       {/* Top Ad 1 */}
